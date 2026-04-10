@@ -25,20 +25,28 @@
       text-align: center;
       font-family: Arial, sans-serif;
       color: white;
-      text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.8);
-      opacity: 0;
+      text-shadow: 0 0 10px rgba(255,255,255,0.8),
+                   0 0 20px rgba(255,255,255,0.6);
       transition: opacity 1s ease-in-out;
     }
 
     .main-text {
       font-size: 24px;
       font-weight: bold;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .sub-text {
       font-size: 14px;
-      opacity: 0.7;
+      opacity: 0.8;
+      color: #cccccc;
+      font-style: italic;
+    }
+
+    .center {
+      font-size: 30px;
+      color: #ff66b2;
+      text-shadow: 0 0 25px rgba(255, 102, 178, 1);
     }
 
     .pink-glow {
@@ -76,14 +84,30 @@
 
 <canvas id="loveCanvas"></canvas>
 
-<div class="text-overlay" id="loveText">
+<!-- 💌 INTRO TEXT -->
+<div class="text-overlay" id="introText" style="opacity: 1;">
+  <div class="main-text">God said at the</div>
+  <div class="main-text center">right</div>
+  <div class="main-text">time it will happen</div>
+  <div class="sub-text">Isaiah 60:22</div>
+
+  <br>
+
+  <div class="main-text">is this the right</div>
+  <div class="main-text">time to ask</div>
+  <div class="main-text">to</div>
+  <div class="main-text">be your special person?</div>
+</div>
+
+<!-- 💖 CONFESSION TEXT -->
+<div class="text-overlay" id="loveText" style="opacity: 0;">
   <div class="main-text">Graceee, my heart made a choice... it’s you.</div>
   <div class="sub-text">I have a crush on you.</div>
 </div>
 
 <button class="btn" onclick="spawnExtraLove(); showRomanticText()">Click Me 💕</button>
 
-<audio id="bgm" autoplay loop>
+<audio id="bgm" loop>
   <source src="https://cdn.pixabay.com/download/audio/2022/11/03/audio_6c4a97c0b5.mp3?filename=romantic-love-ambient-piano-12695.mp3" type="audio/mpeg" />
 </audio>
 
@@ -113,7 +137,7 @@
     update() {
       this.y += this.speed;
       this.angle += 0.01;
-      this.x += Math.sin(this.angle) * 1;
+      this.x += Math.sin(this.angle);
       if (this.y > canvas.height) {
         this.reset();
         this.y = -this.size;
@@ -145,7 +169,10 @@
   }
 
   function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // 🔥 BACKGROUND FIX (INI YANG PENTING)
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
     hearts.forEach((heart) => {
       heart.update();
       heart.draw();
@@ -160,36 +187,26 @@
     canvas.height = window.innerHeight;
   });
 
-  function checkLoveOverlap() {
-    const text = document.getElementById("loveText");
-    const overlapping = hearts.some(
-      h => Math.abs(h.x - window.innerWidth / 2) < 50 &&
-           Math.abs(h.y - window.innerHeight / 2) < 50
-    );
-    text.classList.toggle("pink-glow", overlapping);
-    requestAnimationFrame(checkLoveOverlap);
-  }
-
-  checkLoveOverlap();
-
-  // ✨ Extra love effect on button click
   function spawnExtraLove() {
     for (let i = 0; i < 20; i++) {
+      if (hearts.length > 200) return;
       const h = new Heart();
       h.x = window.innerWidth / 2 + (Math.random() - 0.5) * 200;
       h.y = window.innerHeight / 2 + (Math.random() - 0.5) * 200;
-      h.size = Math.random() * 20 + 10;
       hearts.push(h);
     }
   }
 
-  // ✨ Show Romantic Text with animation
   function showRomanticText() {
+    const intro = document.getElementById("introText");
     const text = document.getElementById("loveText");
-    text.style.opacity = 1;
+
+    intro.style.opacity = 0;
+    setTimeout(() => {
+      text.style.opacity = 1;
+    }, 800);
   }
 
-  // Mobile autoplay fix
   window.addEventListener('click', () => {
     document.getElementById("bgm").play().catch(() => {});
   }, { once: true });
